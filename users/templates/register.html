@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}
+    Register
+{% endblock title %}
+
+{% block content %}
+
+<h1 class="mainTitle">Chat now!</h1>
+<p class="slogan">Anonymous<span>,</span> Fast<span>,</span> Free</p>
+<form action="/users/register/" method='post' class="registerForm">
+    {% csrf_token %}
+    {{form}}
+    <button class="loginButton">Submit</button>
+    <p>want to login? <a href="{% url 'users:login' %}">login now!</a></p>
+</form>
+
+
+
+{% endblock content %}
+

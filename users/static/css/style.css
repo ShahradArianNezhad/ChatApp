@@ -1,0 +1,200 @@
+body {
+    background: linear-gradient(90deg, #efd5ff 0%, #515ada 100%);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+.loginForm{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    background: rgb(250, 250, 250);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.10);
+    padding-top: 40px;
+    padding-bottom: 40px;
+    padding-left: 60px;
+    padding-right: 60px;
+    border-radius: 15px;
+    margin-bottom: 180px;
+}
+
+.loginForm div{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 30px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+.loginForm div label{
+    text-align: center;
+}
+.loginForm div input{
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+    outline: none;
+}
+.loginForm div label{
+    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: #2b2d42;
+    letter-spacing: 0.3px;
+    padding-left: 8px;
+}
+
+.loginForm p{
+    margin-top: 30px;
+}
+
+.loginButton{
+    --primary-color: #667ce2;
+    --hover-color: #3a0ca3;
+    --active-color: #2b2d42;
+    --text-color: #ffffff;
+    
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+    background: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mainTitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 4rem;
+    font-weight: 700;
+    color: #2b2d42;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    background: linear-gradient(90deg, #4361ee, #3a0ca3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.5px;
+}
+  
+.slogan {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #4e4f52;
+    text-align: center;
+    margin-top: 0;
+    letter-spacing: 1px;
+}
+  
+
+.slogan span {
+    color: #000000;
+    font-weight: 600;
+}
+
+.mainTitle {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+
+@keyframes fadeInUp {
+from {
+    opacity: 0;
+    transform: translateY(20px);
+}
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
+
+p{
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: #2b2d42;
+    letter-spacing: 0.3px;
+
+}
+
+
+
+
+.registerForm{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    background: rgb(250, 250, 250);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.10);
+    padding-top: 40px;
+    padding-bottom: 40px;
+    padding-left: 60px;
+    padding-right: 60px;
+    border-radius: 15px;
+    margin-bottom: 180px;
+}
+
+.registerForm div{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+.registerForm div label{
+    text-align: center;
+}
+.registerForm div input{
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+    outline: none;
+}
+.registerForm div label{
+    margin-bottom: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: #2b2d42;
+    letter-spacing: 0.3px;
+    padding-left: 8px;
+}
+
+.errorlist{
+    color: red;
+    text-align: center;
+}
