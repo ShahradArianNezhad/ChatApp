@@ -54,8 +54,15 @@ A real-time chat application built with Django and WebSockets (Channels) and dap
 
 the app will be available at http://localhost:8000
 
+
+### Picture of the website
+
+![App Screenshot](/media/images/readme.png)
+
+
 ### Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
 
 ### License
 This project is licensed under the MIT License - see the LICENSE file for details.
+
