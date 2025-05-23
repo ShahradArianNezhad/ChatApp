@@ -3,6 +3,7 @@
 ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
 ![WebSockets](https://img.shields.io/badge/WebSocket-010101?style=for-the-badge&logo=websocket&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Daphne](https://img.shields.io/badge/Daphne-6DA55F?style=for-the-badge&logo=django&logoColor=white)
 
 A real-time chat application built with Django and WebSockets (Channels) and daphne that supports user registration, chatroom creation, and profile customization.
 
