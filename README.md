@@ -5,6 +5,8 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Daphne](https://img.shields.io/badge/Daphne-6DA55F?style=for-the-badge&logo=django&logoColor=white)
 
+![App Screenshot](/media/images/readme.png)
+
 A real-time chat application built with Django and WebSockets (Channels) and daphne that supports user registration, chatroom creation, and profile customization.
 
 ## Features
@@ -54,10 +56,6 @@ A real-time chat application built with Django and WebSockets (Channels) and dap
 
 the app will be available at http://localhost:8000
 
-
-### Picture of the website
-
-![App Screenshot](/media/images/readme.png)
 
 
 ### Contributing
