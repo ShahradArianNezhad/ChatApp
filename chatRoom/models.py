@@ -24,6 +24,12 @@ class ChatRoom(models.Model):
         blank=True,
         help_text="List of chat rooms with name and id"
     )
+
+    messages = JSONField(
+        default=list,
+        blank=True,
+        help_text="List of messages in the format [{'sender': name, 'time_sent': timestamp, 'message': text}]"
+    )
     
     class Meta:
         ordering = ['-created_at']

@@ -16,14 +16,25 @@ ChatApp
     </div>
     <div class="chat-list" id="chatList">
         {% for x in chatrooms %}
-            <a href="{% url "chatRoom:chatroom_detail" x.name %}" class="chat-item-link">
-                <div class="chat-item">
-                    <div class="chat-avatar">{{x.name.0}}{{x.name.1}}</div>
-                    <div class="chat-info">
-                        <div class="chat-name">{{x.name}}</div>
+            {% if x.name == chatroom.name %}
+                <a href="{% url "chatRoom:chatroom_detail" x.name %}" class="selected-chat-item-link">
+                    <div class="chat-item">
+                        <div class="chat-avatar">{{x.name.0}}{{x.name.1}}</div>
+                        <div class="chat-info">
+                            <div class="chat-name">{{x.name}}</div>
+                        </div>
                     </div>
-                </div>
-            </a>    
+                </a>  
+            {% else %}
+                <a href="{% url "chatRoom:chatroom_detail" x.name %}" class="chat-item-link">
+                    <div class="chat-item">
+                        <div class="chat-avatar">{{x.name.0}}{{x.name.1}}</div>
+                        <div class="chat-info">
+                            <div class="chat-name">{{x.name}}</div>
+                        </div>
+                    </div>
+                </a>  
+            {% endif %}
         {% endfor %}
 
     </div>
@@ -39,7 +50,24 @@ ChatApp
     </div>
     
     <div class="chat-messages" id="chatMessages">
-        <!-- Messages will be added here dynamically -->
+        {% for i in messages %}
+            {% if user.username != i.sender %}
+            <div class="message received">
+                <div class="message-avatar">{{i.sender.0}}{{i.sender.1}}</div>
+                <div class="message-content">{{i.message}}</div>
+                <div class="message-time">{{i.time_sent}}</div>
+            </div>
+            {% else %}
+            <div class="message sent">
+                <div class="message-avatar">{{user.username.0}}{{user.username.1}}</div>
+                <div class="message-content">{{i.message}}</div>
+                <div class="message-time">{{i.time_sent}}</div>
+            </div>
+            {% endif %}
+        
+        
+        
+        {% endfor %}
     </div>
     
     <div class="chat-input">
