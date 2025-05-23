@@ -9,10 +9,10 @@ ChatApp
 <div class="sidebar">
     <div class="sidebar-header">
         <h2>ChatNow</h2>
-        <button id="addRoomBtn">+</button>
+        <button id="addRoomBtn">New Room</button>
     </div>
     <div class="search-bar">
-        <input type="text" placeholder="Search">
+        <input type="text" placeholder="Search" id="searchInput">
     </div>
     <div class="chat-list" id="chatList">
         {% for x in chatrooms %}
@@ -21,6 +21,15 @@ ChatApp
                     <div class="chat-avatar">{{x.name.0}}{{x.name.1}}</div>
                     <div class="chat-info">
                         <div class="chat-name">{{x.name}}</div>
+                        <div class="chat-preview">
+                            {% if x.messages %}
+                                {% with last_message=x.messages|last %}
+                                {{last_message.sender}}:{{last_message.message}}
+                                {% endwith %}
+                            {% else %}
+                                No messages yet    
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </a>    
@@ -169,7 +178,7 @@ ChatApp
                     // Option 2: Dynamically add the new room to the sidebar
                     // addRoomToSidebar(data.room_name, data.room_id);
                 } else {
-                    alert(data.message || 'Error creating room');
+                    alert('Room not found');
                 }
             })
             .catch(error => {
@@ -199,7 +208,20 @@ ChatApp
         }
 
         
-
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const chatList = document.getElementById('chatList');
+            const chatItems = chatList.querySelectorAll('a');  // all chat room links
+        
+            chatItems.forEach(item => {
+                const chatName = item.querySelector('.chat-name').textContent.toLowerCase();
+                if (chatName.includes(filter)) {
+                    item.style.display = '';  // show
+                } else {
+                    item.style.display = 'none';  // hide
+                }
+            });
+        });
 
 
 

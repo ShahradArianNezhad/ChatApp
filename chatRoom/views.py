@@ -4,6 +4,7 @@ from users.models import UserProfile
 from chatRoom.models import ChatRoom
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 
@@ -40,7 +41,12 @@ def join_room(request):
         room_name = request.POST.get('room_name')
         if room_name:
             userProfile = UserProfile.objects.get(user=request.user)
-            FoundRoom=ChatRoom.objects.get(name=room_name)
+            try:
+                FoundRoom=ChatRoom.objects.get(name=room_name)
+            except:
+                return JsonResponse({
+                    'status':'not found'
+                })  
             if FoundRoom:
                 userProfile.joined_chatrooms.append(FoundRoom.name)
                 FoundRoom.members.append(request.user.username)
@@ -52,6 +58,32 @@ def join_room(request):
                 return JsonResponse({
                     'status':'not found'
                 })
+
+
+def leave_room(request):
+
+    if request.method=='POST':
+        room_name = request.POST.get('room_name')
+        if room_name:
+            userProfile=UserProfile.objects.get(user=request.user)
+            foundRoom=ChatRoom.objects.get(name=room_name)
+            if foundRoom:
+                userProfile.joined_chatrooms.remove(room_name)
+                foundRoom.members.remove(request.user.username)
+                userProfile.save()
+                foundRoom.save()
+                return JsonResponse({
+                    'status':'success'
+                })
+    return JsonResponse({
+        'status':'fail'
+    })
+
+
+
+
+
+
 
 def chatroom_detail(request,room_name):
     userProfile = UserProfile.objects.get(user=request.user)
@@ -65,4 +97,6 @@ def chatroom_detail(request,room_name):
     messages =chatroom.messages
 
 
-    return render(request,'chatroom_detail.html',{'chatroom':chatroom,"chatrooms":chats,'messages':messages})
+    if room_name in userProfile.joined_chatrooms:
+        return render(request,'chatroom_detail.html',{'chatroom':chatroom,"chatrooms":chats,'messages':messages})
+    raise PermissionDenied

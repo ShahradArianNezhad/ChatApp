@@ -7,7 +7,7 @@ def login(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             auth_login(request,form.get_user())
-            return redirect('users:register')
+            return redirect('chatRoom:home')
     else:
         form = AuthenticationForm()    
     return render(request,"login.html",{"form":form})
@@ -18,7 +18,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             auth_login(request,user)
-            return redirect('users:login')
+            return redirect('chatRoom:home')
     else:
         form=UserCreationForm()    
     return render(request,"register.html",{"form":form})

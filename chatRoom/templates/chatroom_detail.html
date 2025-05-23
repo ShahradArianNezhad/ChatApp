@@ -9,10 +9,10 @@ ChatApp
 <div class="sidebar">
     <div class="sidebar-header">
         <h2>ChatNow</h2>
-        <button id="addRoomBtn">+</button>
+        <button id="addRoomBtn">New Room</button>
     </div>
     <div class="search-bar">
-        <input type="text" placeholder="Search">
+        <input type="text" placeholder="Search" id="searchInput">
     </div>
     <div class="chat-list" id="chatList">
         {% for x in chatrooms %}
@@ -21,7 +21,16 @@ ChatApp
                     <div class="chat-item">
                         <div class="chat-avatar">{{x.name.0}}{{x.name.1}}</div>
                         <div class="chat-info">
-                            <div class="chat-name">{{x.name}}</div>
+                            <div class="chat-name selected-name">{{x.name}}</div>
+                            <div class="chat-preview">
+                                {% if x.messages %}
+                                    {% with last_message=x.messages|last %}
+                                    {{last_message.sender}}:{{last_message.message}}
+                                    {% endwith %}
+                                {% else %}
+                                    No messages yet    
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </a>  
@@ -31,6 +40,15 @@ ChatApp
                         <div class="chat-avatar">{{x.name.0}}{{x.name.1}}</div>
                         <div class="chat-info">
                             <div class="chat-name">{{x.name}}</div>
+                            <div class="chat-preview">
+                                {% if x.messages %}
+                                    {% with last_message=x.messages|last %}
+                                    {{last_message.sender}}:{{last_message.message}}
+                                    {% endwith %}
+                                {% else %}
+                                    No messages yet    
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </a>  
@@ -47,6 +65,7 @@ ChatApp
             <div class="chat-name">{{user.username}}</div>
             <div class="chat-preview">online</div>
         </div>
+        <button class="leaveRoomBtn">Leave Room</button>
     </div>
     
     <div class="chat-messages" id="chatMessages">
@@ -149,6 +168,23 @@ ChatApp
 
         };
 
+        document.querySelector('.send-button').onclick = function(x) {
+            const now = new Date();
+            e =document.querySelector('.chat-input input')
+
+            if (e.value.trim()!="") {
+                const message = e.value;
+                chatSocket.send(JSON.stringify({
+                    'type':'chat_message',
+                    'message': message,
+                    'sender': '{{ request.user.username }}',
+                    'time_sent':now.getHours()+":"+now.getMinutes()
+                }));
+                e.value = '';
+            }
+
+        };
+
 
         function scrollToBottom() {
             const messagesContainer = document.querySelector('#chatMessages');
@@ -157,7 +193,20 @@ ChatApp
 
 
 
-
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const chatList = document.getElementById('chatList');
+            const chatItems = chatList.querySelectorAll('a');  // all chat room links
+        
+            chatItems.forEach(item => {
+                const chatName = item.querySelector('.chat-name').textContent.toLowerCase();
+                if (chatName.includes(filter)) {
+                    item.style.display = '';  // show
+                } else {
+                    item.style.display = 'none';  // hide
+                }
+            });
+        });
 
 
 
@@ -215,11 +264,6 @@ ChatApp
                     // Clear the input
                     document.getElementById('roomName').value = '';
                     
-                    // Option 1: Reload the page to show the new room
-                    window.location.reload();
-                    
-                    // Option 2: Dynamically add the new room to the sidebar
-                    // addRoomToSidebar(data.room_name, data.room_id);
                 } else {
                     alert(data.message || 'Error creating room');
                 }
@@ -275,6 +319,36 @@ ChatApp
             .catch(error => {
                 console.error('Error:', error);
                 alert('Error creating room');
+            });
+        });
+
+        leaveRoomBtn=document.querySelector(".leaveRoomBtn")
+        leaveRoomBtn.addEventListener('click', function() {
+            const roomName = document.querySelector(".selected-name").innerHTML
+            
+            fetch('http://localhost:8000/chatRoom/leave-room/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken'), // You'll need to implement getCookie
+                },
+                body: `room_name=${encodeURIComponent(roomName)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = 'http://localhost:8000/chatRoom';
+                }
+                else if(data.status==="fail"){
+                    alert("fail")
+                }
+                else {
+                    alert('Error leaving room');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error leaving room');
             });
         });
 
