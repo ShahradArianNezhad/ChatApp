@@ -13,6 +13,7 @@ class UserProfile(models.Model):
         blank=True,
         help_text="List of chat rooms with name and id"
     )
+    profile_image=models.ImageField(upload_to='images/',default='profile_images/default.png')
 
     def __str__(self):
         return f"{self.user.username}'s profile"

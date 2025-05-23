@@ -4,6 +4,7 @@ from users.models import UserProfile
 from chatRoom.models import ChatRoom
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 
 # Create your views here.
@@ -16,7 +17,7 @@ def home(request):
     for i in userProfile.joined_chatrooms:
         chats.append(ChatRoom.objects.get(name=i))
         
-    return render(request,'home.html',{"chatrooms":chats})
+    return render(request,'home.html',{"chatrooms":chats,'userProfile':userProfile})
 
 @csrf_exempt
 def create_room(request):
@@ -93,10 +94,26 @@ def chatroom_detail(request,room_name):
 
 
     chatroom = get_object_or_404(ChatRoom,name=room_name)
-
     messages =chatroom.messages
+
+    enriched_messages =[]
+    for msg in messages:
+        try:
+            messageProfile = User.objects.get(username=msg['sender'])
+            messageProfile= UserProfile.objects.get(user=messageProfile)
+            profile_image_url = messageProfile.profile_image.url
+
+        except:    
+            profile_image_url = '/media/profile_images/default.png'
+        enriched_messages.append({
+            'sender': msg['sender'],
+            'message': msg['message'],
+            'time_sent': msg['time_sent'],
+            'image_url': profile_image_url
+        })    
+
 
 
     if room_name in userProfile.joined_chatrooms:
-        return render(request,'chatroom_detail.html',{'chatroom':chatroom,"chatrooms":chats,'messages':messages})
+        return render(request,'chatroom_detail.html',{'chatroom':chatroom,"chatrooms":chats,'messages':messages,'userProfile':userProfile,'enrichedMessages':enriched_messages})
     raise PermissionDenied

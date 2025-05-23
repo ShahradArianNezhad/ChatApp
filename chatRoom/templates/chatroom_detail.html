@@ -19,7 +19,7 @@ ChatApp
             {% if x.name == chatroom.name %}
                 <a href="{% url "chatRoom:chatroom_detail" x.name %}" class="selected-chat-item-link">
                     <div class="chat-item">
-                        <div class="chat-avatar">{{x.name.0}}{{x.name.1}}</div>
+                        <div class="chat-avatar">{{x.name.0}}{{x.name.1}} </div>
                         <div class="chat-info">
                             <div class="chat-name selected-name">{{x.name}}</div>
                             <div class="chat-preview">
@@ -60,7 +60,11 @@ ChatApp
 
 <div class="chat-area">
     <div class="chat-header">
-        <div class="chat-avatar">{{user.username.0}}{{user.username.1}}</div>
+        {% if userProfile.profile_image.url != "/media/profile_images/default.png" %}
+        <div class="chat-avatar"><img src="{{userProfile.profile_image.url}}" alt="" class="profImage"> <button class="imageAdd">+</button><input type="file" id="fileInput" accept="image/*" style="display:none" /></div>
+        {% else %}
+        <div class="chat-avatar">{{user.username.0}}{{user.username.1}} <button class="imageAdd">+</button><input type="file" id="fileInput" accept="image/*" style="display:none" /></div>
+        {% endif %}
         <div class="chat-info">
             <div class="chat-name">{{user.username}}</div>
             <div class="chat-preview">online</div>
@@ -69,19 +73,35 @@ ChatApp
     </div>
     
     <div class="chat-messages" id="chatMessages">
-        {% for i in messages %}
+        {% for i in enrichedMessages %}
             {% if user.username != i.sender %}
-            <div class="message received">
-                <div class="message-avatar">{{i.sender.0}}{{i.sender.1}}</div>
-                <div class="message-content">{{i.message}}</div>
-                <div class="message-time">{{i.time_sent}}</div>
-            </div>
+                {% if i.image_url != "/media/profile_images/default.png" %}
+                    <div class="message received">
+                        <div class="message-avatar"><img src="{{i.image_url}}" alt="" class="messageImage"></div>
+                        <div class="message-content">{{i.message}}</div>
+                        <div class="message-time">{{i.time_sent}}</div>
+                    </div>
+                {% else %}
+                    <div class="message received">
+                        <div class="message-avatar">{{i.sender.0}}{{i.sender.1}}</div>
+                        <div class="message-content">{{i.message}}</div>
+                        <div class="message-time">{{i.time_sent}}</div>
+                    </div>
+                {% endif %}
             {% else %}
-            <div class="message sent">
-                <div class="message-avatar">{{user.username.0}}{{user.username.1}}</div>
-                <div class="message-content">{{i.message}}</div>
-                <div class="message-time">{{i.time_sent}}</div>
-            </div>
+                {% if i.image_url != "/media/profile_images/default.png" %}
+                    <div class="message sent">
+                        <div class="message-avatar"><img src="{{i.image_url}}" alt="" class="messageImage"></div>
+                        <div class="message-content">{{i.message}}</div>
+                        <div class="message-time">{{i.time_sent}}</div>
+                    </div>
+                {% else %}
+                    <div class="message sent">
+                        <div class="message-avatar">{{user.username.0}}{{user.username.1}}</div>
+                        <div class="message-content">{{i.message}}</div>
+                        <div class="message-time">{{i.time_sent}}</div>
+                    </div>
+                {% endif %}    
             {% endif %}
         
         
@@ -121,30 +141,107 @@ ChatApp
 
 
 <script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const uploadBtn = document.querySelector('.imageAdd');
+    const fileInput = document.getElementById('fileInput');
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click();  
+    });
+
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+      
+        const formData = new FormData();
+        formData.append('image', file);
+      
+        fetch('http://localhost:8000/users/image-upload/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'), 
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Upload success:', data);
+        })
+        .catch(error => {
+          console.error('Upload error:', error);
+        });
+    });
+
+
+
+
+
+
+
     roomName="{{chatroom.name}}"
     const chatSocket = new WebSocket(
         `ws://${window.location.host}/ws/chat/${roomName}/`);
 
 
-        chatSocket.onmessage = function(e) {
+        chatSocket.onmessage = async function(e) {
             const data = JSON.parse(e.data);
+            await fetch('http://localhost:8000/users/getImageUrl/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken'), 
+                },
+                body: `username=${encodeURIComponent(data.sender)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+              image=data.url
+            })
             
             if (data.sender=="{{user.username}}"){
+                if(image==="/media/profile_images/default.png"){
+                    document.querySelector('#chatMessages').innerHTML += `
+                    <div class="message sent">
+                        <div class="message-avatar">${data.sender[0]}${data.sender[1]}</div>
+                        <div class="message-content">${data.message}</div>
+                        <div class="message-time">${data.time_sent}</div>
+                    </div>
+                    `;}
+                else{
                 document.querySelector('#chatMessages').innerHTML += `
-                <div class="message sent">
-                    <div class="message-avatar">${data.sender[0]}${data.sender[1]}</div>
-                    <div class="message-content">${data.message}</div>
-                    <div class="message-time">${data.time_sent}</div>
-                </div>
-                `;}
+                    <div class="message sent">
+                        <div class="message-avatar"><img src="${image}" alt="" class="messageImage"></div>
+                        <div class="message-content">${data.message}</div>
+                        <div class="message-time">${data.time_sent}</div>
+                    </div>`};}
             else{
-                document.querySelector('#chatMessages').innerHTML += `
-                <div class="message received">
-                    <div class="message-avatar">${data.sender[0]}${data.sender[1]}</div>
-                    <div class="message-content">${data.message}</div>
-                    <div class="message-time">${data.time_sent}</div>
-                </div>
-            `;}
+                if(image==="/media/profile_images/default.png"){
+                    document.querySelector('#chatMessages').innerHTML += `
+                    <div class="message received">
+                        <div class="message-avatar">${data.sender[0]}${data.sender[1]}</div>
+                        <div class="message-content">${data.message}</div>
+                        <div class="message-time">${data.time_sent}</div>
+                    </div>`;}
+                else{
+                    document.querySelector('#chatMessages').innerHTML += `
+                    <div class="message received">
+                        <div class="message-avatar"><img src="${image}" alt="" class="messageImage"></div>
+                        <div class="message-content">${data.message}</div>
+                        <div class="message-time">${data.time_sent}</div>
+                    </div>`;}
+                }    
             scrollToBottom()
         };
 
@@ -207,20 +304,6 @@ ChatApp
                 }
             });
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     document.addEventListener('DOMContentLoaded', scrollToBottom);
@@ -355,20 +438,7 @@ ChatApp
 
     
 
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
+
 
         
 
@@ -408,5 +478,19 @@ ChatApp
         });
 
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 {% endblock content %}

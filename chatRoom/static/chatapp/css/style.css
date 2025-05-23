@@ -69,6 +69,7 @@ body {
 }
 
 .chat-avatar {
+    position: relative;
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -444,4 +445,44 @@ body {
 }
 #chatMessages {
     scroll-behavior: smooth;
+}
+
+.imageAdd{
+    opacity: 0;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    transition: opacity 0.25s;
+    cursor: pointer;
+    outline: none;
+    color: white;
+    font-weight: 600;
+    border: none;
+    
+}
+
+.imageAdd:hover{
+    opacity: 100;
+}
+
+
+.profImage{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: solid #17212b 1px;
+}
+
+.messageImage{
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
 }

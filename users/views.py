@@ -1,6 +1,9 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import login as auth_login
+from .models import UserProfile
+from django.http import JsonResponse
+from django.contrib.auth.models import User
 
 def login(request):
     if request.method=="POST":
@@ -23,3 +26,17 @@ def register(request):
         form=UserCreationForm()    
     return render(request,"register.html",{"form":form})
 
+def image_upload(request):
+    if request.method=="POST" and request.FILES.get('image'):
+        profile=UserProfile.objects.get(user=request.user)
+        profile.profile_image=request.FILES['image']
+        profile.save()
+        return JsonResponse({'status': 'success', 'image_url': profile.profile_image.url})
+    return JsonResponse({'status': 'fail'}, status=400)
+
+def getImageUrl(request):
+    if request.method=='POST':
+        profname=request.POST.get('username')
+        targetUser = User.objects.get(username=profname)
+        profile = UserProfile.objects.get(user=targetUser)
+        return JsonResponse({'url':profile.profile_image.url})

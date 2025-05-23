@@ -40,7 +40,11 @@ ChatApp
 
 <div class="chat-area">
     <div class="chat-header">
-        <div class="chat-avatar">{{user.username.0}}{{user.username.1}}</div>
+        {% if userProfile.profile_image.url != "/media/profile_images/default.png" %}
+        <div class="chat-avatar"><img src="{{userProfile.profile_image.url}}" alt="" class="profImage"> <button class="imageAdd">+</button><input type="file" id="fileInput" accept="image/*" style="display:none" /></div>
+        {% else %}
+        <div class="chat-avatar">{{user.username.0}}{{user.username.1}} <button class="imageAdd">+</button><input type="file" id="fileInput" accept="image/*" style="display:none" /></div>
+        {% endif %}
         <div class="chat-info">
             <div class="chat-name">{{user.username}}</div>
             <div class="chat-preview">online</div>
@@ -80,6 +84,50 @@ ChatApp
 
 
 <script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+
+    const uploadBtn = document.querySelector('.imageAdd');
+    const fileInput = document.getElementById('fileInput');
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click();  
+    });
+
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+      
+        const formData = new FormData();
+        formData.append('image', file);
+      
+        fetch('http://localhost:8000/users/image-upload/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'), 
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Upload success:', data);
+        })
+        .catch(error => {
+          console.error('Upload error:', error);
+        });
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('roomModal');
@@ -182,20 +230,7 @@ ChatApp
         });
 
 
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
+
 
         
         document.getElementById('searchInput').addEventListener('input', function() {
