@@ -1,0 +1,17 @@
+asgiref==3.8.1
+attrs==25.3.0
+autobahn==24.4.2
+Automat==25.4.16
+channels==4.2.2
+daphne==4.2.0
+Django==5.2.1
+hyperlink==21.0.0
+incremental==24.7.2
+psycopg2-binary==2.9.10
+PyYAML==6.0.2
+service-identity==24.2.0
+sqlparse==0.5.3
+Twisted==24.11.0
+txaio==23.1.1
+zope.interface==7.2
+pillow==11.2.1
