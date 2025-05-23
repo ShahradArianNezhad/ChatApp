@@ -51,7 +51,7 @@ A real-time chat application built with Django and WebSockets (Channels) and dap
     ```bash
     sudo docker run -p 8000:8000 --name my_app python-chatroom
 
-the app will be available at [text](http://localhost:8000)
+the app will be available at http://localhost:8000
 
 ### Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
