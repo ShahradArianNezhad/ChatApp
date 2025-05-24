@@ -6,9 +6,9 @@ from channels.db import database_sync_to_async
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'chat_{self.room_name}'
+        self.room_group_name = f'chat_{self.room_name.replace(" ","_")}'
 
-        # Join room group
+
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -16,7 +16,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Leave room group
+
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -24,7 +24,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def addToDB(self,data):
-        myRoom = ChatRoom.objects.get(name=self.room_name)
+        myRoom = ChatRoom.objects.get(name=self.room_name.replace('_',' '))
         myRoom.messages.append(data)
         myRoom.save()
 

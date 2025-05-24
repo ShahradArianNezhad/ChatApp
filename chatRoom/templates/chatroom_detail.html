@@ -191,8 +191,9 @@ ChatApp
 
 
     roomName="{{chatroom.name}}"
+    safeRoomName = roomName.replace(/ /g,'_')
     const chatSocket = new WebSocket(
-        `ws://${window.location.host}/ws/chat/${roomName}/`);
+        `ws://${window.location.host}/ws/chat/${safeRoomName}/`);
 
 
         chatSocket.onmessage = async function(e) {
